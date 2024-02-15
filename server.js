@@ -3,7 +3,6 @@ const express = require("express");
 const authRoute = require("./router/auth-router");
 const contactRoute = require("./router/contact-router");
 const connectDb = require("./utils/db");
-const router = require("./router/auth-router");
 const errorMiddleware = require("./middlewale/error-middleware");
 const cors = require("cors");
 const serviceRoute = require("./router/service-route");
@@ -12,25 +11,28 @@ const adminRouter = require("./router/admin-router");
 const app = express();
 const PORT = 5000;
 
-//  get the cors from middleware.
-const optioCors = {
-  origin: "http://localhost:5173",
-  method: "GET, POST, PUT DELETE, PATCH, HEADER",
-  credentials: true,
-};
-app.use(cors(optioCors));
+// Set up CORS middleware to allow requests from your Firebase Hosting domain
+app.use(
+  cors({
+    origin: "https://ashutosh-portfolio-mern.web.app",
+    methods: "GET, POST, PUT, DELETE, PATCH, OPTIONS", // Add OPTIONS method
+    credentials: true,
+  })
+);
 
-// User a admin router
+// Use the admin router
 app.use("/api/admin", adminRouter);
 
-// These are the routes.
+// Set up your routes
 app.use(express.json());
 app.use("/api/auth", authRoute);
 app.use("/api/form", contactRoute);
 app.use("/api/data", serviceRoute);
 
+// Error handling middleware
 app.use(errorMiddleware);
 
+// Start the server
 const startServer = async () => {
   try {
     await connectDb();
